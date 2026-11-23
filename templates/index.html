@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reliure — Convertisseur EPUB vers PDF</title>
+  <meta name="description" content="Convertissez vos EPUB en PDF de qualité livre : sommaire paginé, signets, en-têtes courants et couverture.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <a class="brand" href="/" aria-label="Reliure, accueil">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 5.2c0-.6.5-1.1 1.1-1.1H10c1.1 0 2 .9 2 2v13c0-.8-.7-1.5-1.5-1.5H5.1c-.6 0-1.1-.5-1.1-1.1V5.2Z"/>
+          <path d="M20 5.2c0-.6-.5-1.1-1.1-1.1H14c-1.1 0-2 .9-2 2v13c0-.8.7-1.5 1.5-1.5h5.4c.6 0 1.1-.5 1.1-1.1V5.2Z"/>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <span class="brand-name">Reliure</span>
+        <span class="brand-tag">EPUB → PDF</span>
+      </span>
+    </a>
+    <div class="engine" id="engine" data-state="checking" role="status" aria-live="polite">
+      <span class="engine-dot" aria-hidden="true"></span>
+      <span class="engine-label">Vérification du moteur…</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Atelier de conversion</p>
+      <h1>Vos EPUB deviennent des livres <em>imprimables</em>.</h1>
+      <p class="lede">Une mise en page éditoriale, un sommaire paginé, des signets navigables et une couverture soignée. Tout se passe sur votre ordinateur.</p>
+    </section>
+
+    <div class="workspace" id="workspace">
+      <section class="panel" aria-labelledby="step-file">
+        <div class="panel-head">
+          <h2 id="step-file"><span class="step">1</span>Votre fichier</h2>
+          <p class="panel-note">EPUB 2 et 3</p>
+        </div>
+
+        <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-controls="fileInput" aria-describedby="drop-hint">
+          <span class="dropzone-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 15V4"/>
+              <path d="m8 7.5 4-3.5 4 3.5"/>
+              <path d="M4.5 14v4.2c0 .7.6 1.3 1.3 1.3h12.4c.7 0 1.3-.6 1.3-1.3V14"/>
+            </svg>
+          </span>
+          <span class="dropzone-title">Déposez votre EPUB ici</span>
+          <span class="dropzone-sub">ou <u>parcourez vos fichiers</u></span>
+          <span class="dropzone-hint" id="drop-hint">Format .epub · 100 Mo maximum · sans DRM</span>
+          <input type="file" id="fileInput" accept=".epub,application/epub+zip" hidden>
+        </div>
+
+        <div class="analyzing hidden" id="analyzing">
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Lecture des métadonnées…</span>
+        </div>
+
+        <article class="book hidden" id="bookCard">
+          <div class="book-cover" id="bookCover">
+            <img id="bookCoverImage" alt="" class="hidden">
+            <span class="book-cover-fallback" id="coverFallback">EPUB</span>
+          </div>
+          <div class="book-body">
+            <p class="book-kicker" id="bookKicker">Fichier chargé</p>
+            <h3 class="book-title" id="bookTitle">—</h3>
+            <p class="book-author" id="bookAuthor">—</p>
+            <ul class="book-meta" id="bookMeta"></ul>
+            <ul class="book-warnings hidden" id="bookWarnings"></ul>
+            <ul class="book-checks hidden" id="bookChecks" aria-label="Contrôles de l'analyse"></ul>
+            <button type="button" class="link-btn" id="changeFile">Choisir un autre fichier</button>
+          </div>
+        </article>
+
+        <p class="field-error hidden" id="fileError" role="alert"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="step-options">
+        <div class="panel-head">
+          <h2 id="step-options"><span class="step">2</span>Mise en page</h2>
+          <p class="panel-note" id="layoutNote">A5 · 17 mm · 11 pt</p>
+        </div>
+
+        <div class="options">
+          <label class="option">
+            <span class="option-text">
+              <span class="option-title">Sommaire et signets</span>
+              <span class="option-desc">Table des matières paginée et repères de navigation dans le PDF.</span>
+            </span>
+            <input type="checkbox" id="optToc" checked>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+
+          <label class="option">
+            <span class="option-text">
+              <span class="option-title">Numéros de page et en-têtes</span>
+              <span class="option-desc">Titre du chapitre courant en tête, pagination en pied de page.</span>
+            </span>
+            <input type="checkbox" id="optPages" checked>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+
+          <label class="option">
+            <span class="option-text">
+              <span class="option-title">Couverture et page de titre</span>
+              <span class="option-desc">L'image de couverture, puis une page de titre avec les métadonnées du livre.</span>
+            </span>
+            <input type="checkbox" id="optCover" checked>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+        </div>
+
+        <div class="layout">
+          <p class="layout-title">Réglages</p>
+          <div class="layout-grid">
+            <label class="layout-field" for="optFormat">
+              <span class="layout-label">Format</span>
+              <select id="optFormat">
+                <option value="a5" data-short="A5" selected>A5 · 148 × 210 mm</option>
+                <option value="a4" data-short="A4">A4 · 210 × 297 mm</option>
+                <option value="six_by_nine" data-short="6 × 9 po">6 × 9 po · 152 × 229 mm</option>
+                <option value="pocket" data-short="Poche">Poche · 110 × 178 mm</option>
+              </select>
+            </label>
+            <label class="layout-field" for="optMargins">
+              <span class="layout-label">Marges</span>
+              <select id="optMargins">
+                <option value="narrow" data-mm="13">Étroites · 13 mm</option>
+                <option value="normal" data-mm="17" selected>Normales · 17 mm</option>
+                <option value="wide" data-mm="22">Larges · 22 mm</option>
+              </select>
+            </label>
+            <label class="layout-field" for="optFontSize">
+              <span class="layout-label">Corps</span>
+              <select id="optFontSize">
+                <option value="10">10 pt</option>
+                <option value="11" selected>11 pt</option>
+                <option value="12">12 pt</option>
+              </select>
+            </label>
+            <label class="layout-field" for="optLineHeight">
+              <span class="layout-label">Interligne</span>
+              <select id="optLineHeight">
+                <option value="1.4">Serré · 1,40</option>
+                <option value="1.55" selected>Normal · 1,55</option>
+                <option value="1.7">Aéré · 1,70</option>
+              </select>
+            </label>
+          </div>
+          <div class="layout-presets" role="group" aria-label="Presets de mise en page">
+            <span class="layout-presets-label">Presets</span>
+            <button type="button" class="preset" data-preset="roman">Roman</button>
+            <button type="button" class="preset" data-preset="essai">Essai</button>
+            <button type="button" class="preset" data-preset="manuel">Manuel illustré</button>
+          </div>
+        </div>
+
+        <label class="field" for="filename">
+          <span class="field-label">Nom du fichier</span>
+          <span class="field-input">
+            <input type="text" id="filename" placeholder="mon-livre" maxlength="120" autocomplete="off" spellcheck="false">
+            <span class="field-suffix">.pdf</span>
+          </span>
+        </label>
+
+        <button type="button" class="btn btn-primary" id="convertBtn" disabled>
+          <span class="btn-label">Convertir en PDF</span>
+          <span class="spinner hidden" id="convertSpinner" aria-hidden="true"></span>
+        </button>
+        <p class="fineprint">Conversion locale : aucun fichier n'est envoyé sur un serveur.</p>
+
+        <div class="progress hidden" id="progress" aria-live="polite">
+          <div class="progress-head">
+            <span id="progressLabel">Préparation…</span>
+            <span id="progressPercent">0 %</span>
+          </div>
+          <div class="progress-track"><span class="progress-bar" id="progressBar"></span></div>
+          <ol class="steps" id="steps">
+            <li data-stage="reading">Analyse de l'EPUB</li>
+            <li data-stage="extracting">Extraction du contenu</li>
+            <li data-stage="assembling">Composition de la page</li>
+            <li data-stage="rendering">Rendu du PDF</li>
+          </ol>
+        </div>
+      </section>
+    </div>
+
+    <section class="result hidden" id="result" aria-live="polite">
+      <div class="result-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m5 12.5 4.2 4.2L19 7"/>
+        </svg>
+      </div>
+      <div class="result-text">
+        <p class="eyebrow">Conversion terminée</p>
+        <h2 id="resultTitle">—</h2>
+        <p class="result-meta" id="resultMeta">—</p>
+      </div>
+      <div class="result-actions">
+        <a class="btn btn-primary" id="downloadBtn" href="#" download>Télécharger le PDF</a>
+        <button type="button" class="btn btn-ghost" id="resetBtn">Convertir un autre fichier</button>
+      </div>
+      <div class="report hidden" id="resultReport" data-state="ok">
+        <p class="report-head">
+          <span class="report-dot" aria-hidden="true"></span>
+          <span id="reportSummary">Contrôle qualité</span>
+        </p>
+        <ul class="report-checks" id="reportChecks" aria-label="Contrôle qualité du PDF"></ul>
+      </div>
+    </section>
+
+    <div class="alert hidden" id="errorPanel" role="alert">
+      <p class="alert-title" id="errorTitle">—</p>
+      <p class="alert-body hidden" id="errorBody"></p>
+      <details class="alert-details hidden" id="errorDetails">
+        <summary>Comment corriger</summary>
+        <p id="errorHint"></p>
+      </details>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>Reliure · conversion locale, sans compte ni envoi de données.</span>
+    <span class="footer-sep" aria-hidden="true">·</span>
+    <span>EPUB vers PDF</span>
+  </footer>
+
+</div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
