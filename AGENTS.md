@@ -14,8 +14,10 @@ vanilla).
 
 Dossier : `D:\Documents\Dev\Freebuff\ConvertisseurEpubPdf`. Ce n'est pas le workspace
 connecté : les outils fichier doivent utiliser des **chemins absolus** et le terminal doit
-travailler depuis `/d/Documents/Dev/Freebuff/ConvertisseurEpubPdf`. **Aucun dépôt git ici** :
-ne rien commiter, ne pas chercher d'historique.
+travailler depuis `/d/Documents/Dev/Freebuff/ConvertisseurEpubPdf`.
+Dépôt : <https://github.com/yyracine/EpubConvertPDF>, branche `main`. Les livres d'essai
+(`*.epub`), `output/` et `.venv/` sont ignorés : ils restent locaux et ne doivent pas être
+ajoutés au dépôt (livres sous droits).
 
 ## Commandes
 

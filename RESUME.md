@@ -9,7 +9,8 @@ interface française). Aucun fichier ne quitte l'ordinateur.
 Dossier : `D:\Documents\Dev\Freebuff\ConvertisseurEpubPdf` — ce n'est **pas** le workspace
 connecté (`D:\Documents\Dev\Test`) : utiliser des chemins absolus pour lire/écrire, et
 travailler en terminal depuis `/d/Documents/Dev/Freebuff/ConvertisseurEpubPdf`.
-Pas de dépôt git dans ce dossier : rien n'est commité.
+Dépôt : <https://github.com/yyracine/EpubConvertPDF>, branche `main` ; les livres d'essai
+(`*.epub`), `output/` et `.venv/` sont ignorés (livres sous droits, non publiés).
 
 ---
 
@@ -212,3 +213,7 @@ redécouvrir le management* (essai, 56 notes de fin).
   14 tests OK, serveur relancé, 2 notes encore décalées sur 56.
 - **23/11/2026** — création d'`AGENTS.md` : protocole de session (lire ce fichier d'abord,
   le mettre à jour à la fin), commandes, environnement, conventions et pièges connus.
+- **23/11/2026** — premier commit (`972cf66`) poussé sur
+  <https://github.com/yyracine/EpubConvertPDF> (branche `main`) : 22 fichiers, `.gitignore`
+  étendu à `*.epub` pour garder les livres d'essai hors du dépôt ; identité git locale
+  réglée sur `yyracine <yyracine@users.noreply.github.com>`.
