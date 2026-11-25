@@ -258,6 +258,11 @@ redécouvrir le management* (essai, 56 notes de fin).
   **Contrôle visuel** des p. 96/97 et 247/248 du PDF *Management* (rendu pypdfium2 dans
   `output/_visual/`) : les notes **35** et **49** sont bien en bas de la page de leur appel
   (p. 96 et p. 247), les pages 97 et 248 n'en portent aucune.
+- **25/11/2026** — variantes de réglages sur *Management* via les routes de l'interface, sur
+  venv réinstallé : **preset essai** (marges larges, interligne 1,70, 11 pt) → **306 p.** ;
+  **12 pt** (marges normales, 1,55) → **311 p.** Dans les deux cas 56 appels de note,
+  **0 note décalée** et rapport qualité `ok` (1,10 Mo / 27 s et 1,03 Mo / 26,7 s). PDF dans
+  `output/_variantes/`. Les 0 note décalée ne dépendent donc pas du réglage de mise en page.
 - **25/11/2026** — WeasyPrint épinglé au commit amont `0dffae4` dans `requirements.txt`
   (commentaire de retour à PyPI pour la 71.0). Venv **reconstruit de zéro**
   (`rm -rf .venv` + `python -m venv` + `pip install -r requirements.txt`) : installation
