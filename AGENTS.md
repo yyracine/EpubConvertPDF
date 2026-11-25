@@ -98,7 +98,12 @@ avant `taskkill //PID … //F`.
 - Un saut de ligne dans le texte d'une note fait planter WeasyPrint
   (`Got ' \n' between two lines`) dès que l'area `@footnote` se coupe.
 - Un bloc (`<p>`, `<div>`…) imbriqué dans un `<span>` de note coupe le paragraphe appelant.
-- WeasyPrint 70 laisse encore 2 notes sur 56 sur la page suivante (détail dans `RESUME.md`).
+- WeasyPrint 70 laisse encore 2 notes sur 56 sur la page suivante. Les rattrapages déjà
+  testés (seconde passe, `footnote-policy: block` ciblée, scission de paragraphe, saut de
+  page forcé, area resserrée) dégradent tous la page : mesures et verdict dans `RESUME.md`.
+  Ne pas les reprendre sans une version de WeasyPrint qui corrige `footnote-policy: line`.
+  Contrôle : comparer, sur le PDF, la page de chaque lien `#reliure-fn-N` à la page de sa
+  destination nommée.
 - Un `line-height` ou `font` figé dans l'EPUB fige le réglage : passer par `css_guard`.
 - `float: footnote` exige une version récente de WeasyPrint ; le rendu PDF ne doit pas être
   remplacé par une capture d'écran.

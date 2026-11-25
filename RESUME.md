@@ -26,7 +26,8 @@ Dépôt : <https://github.com/yyracine/EpubConvertPDF>, branche `main` ; les liv
 - Classification des documents (couverture, titre, mentions, sommaire, corps, notes, index)
   à partir des types **de niveau document** uniquement.
 - **Notes de bas de page réelles** (`float: footnote`) avec appel cliquable et retour.
-- Serveur de développement en cours sur `http://127.0.0.1:8765` (`/api/health` → `ready: true`).
+- Serveur de développement **arrêté** en fin de session (relancer avec `run.bat`, ou
+  `RELIURE_PORT=8765 RELIURE_OPEN_BROWSER=0 .venv/Scripts/python.exe app.py`).
 
 Vérifications de référence (23/11/2026) :
 
@@ -129,8 +130,26 @@ Vérifications de référence (23/11/2026) :
 
 1. **2 notes sur 56 encore rejetées à la page suivante** (fn-35 p. 96→97, fn-49 p. 247→248) :
    limite de WeasyPrint 70, qui réserve la place puis déplace la note malgré
-   `footnote-policy: line`. Piste : rendu en deux passes avec re-pagination ciblée — plus
-   lourd, peut creuser des blancs ; non fait sans accord.
+   `footnote-policy: line`. **Rendu en deux passes essayé et non retenu** (23/11/2026), car
+   aucune variante ne rattache les notes sans dégrader la page :
+
+   | Seconde passe / réglage | Pages | Notes décalées | Effet visible |
+   |---|---|---|---|
+   | référence (une passe) | 274 | 2 sur 56 | — |
+   | note déplacée avant son paragraphe | 274 | 2 | aucun effet |
+   | note déplacée dans le bloc précédent | 274 | 2 | aucun effet |
+   | `footnote-policy: block` ciblée (`!important`) | 274 | 2 | aucun effet |
+   | `break-inside: avoid` sur le paragraphe | 274 | 2 | aucun effet |
+   | saut de page avant le paragraphe | 275 | 0 | p. 96 et 248 blanches à 60–70 % |
+   | paragraphe scindé juste avant l'appel | 274 | 0 | « pas » seul en fin de p. 96 ;
+     « 49. » isolé en tête de p. 248 |
+   | phrase portant l'appel déplacée | 275 | 1 | p. 35 corrigée, 49 revient décalée |
+   | area resserrée (hors deux passes) | 273 | 4 | pire |
+
+   Verdict : la correction qui marche coûte une page et deux pages à moitié vides ; celle
+   qui garde la pagination laisse un mot et un appel orphelins. Ne pas réessayer sans une
+   version de WeasyPrint qui corrige `footnote-policy: line` ; rouvrir seulement si
+   l'utilisateur préfère explicitement l'appariement à la densité des pages.
 2. **Raccourci `font` à taille relative** (`font: 0.9em/1.2 …`) : laissé intact, donc son
    interligne figé subsiste. Hors périmètre de la demande précédente, à normaliser si besoin.
 3. **Interface web non revérifiée visuellement** depuis les changements (aucun parcours dans
@@ -213,6 +232,13 @@ redécouvrir le management* (essai, 56 notes de fin).
   14 tests OK, serveur relancé, 2 notes encore décalées sur 56.
 - **23/11/2026** — création d'`AGENTS.md` : protocole de session (lire ce fichier d'abord,
   le mettre à jour à la fin), commandes, environnement, conventions et pièges connus.
+- **23/11/2026** — fin de session : serveur arrêté, `AGENTS.md` et `RESUME.md` modifiés mais
+  **non commités**. À reprendre : décider si l'on pousse ces deux fichiers et si l'on ouvre
+  l'option « saut de page » (0 note décalée, 275 p.) ; sinon attendre une version de
+  WeasyPrint corrigeant `footnote-policy: line`.
+- **23/11/2026** — point 1 attaqué : huit variantes mesurées sur *Management* (seconde passe,
+  policy ciblée, scission, saut de page, area resserrée) ; **aucune retenue**, aucune ligne
+  de code produit modifiée, mesures consignées au point 1.
 - **23/11/2026** — premier commit (`972cf66`) poussé sur
   <https://github.com/yyracine/EpubConvertPDF> (branche `main`) : 22 fichiers, `.gitignore`
   étendu à `*.epub` pour garder les livres d'essai hors du dépôt ; identité git locale
