@@ -33,7 +33,7 @@ Vérifications de référence (23/11/2026) :
 
 | Contrôle | Résultat |
 |---|---|
-| `.venv/Scripts/python.exe -m unittest discover -s tests -v` | **26 tests OK** |
+| `.venv/Scripts/python.exe -m unittest discover -s tests -v` | **24 tests OK** |
 | `compileall` (converter, tests, app.py) et `node --check static/app.js` | OK |
 | *La Ferme des Animaux* (11 pt / 1,55) | 89 p., aucune note |
 | *Management* (11 pt / 1,55) | 274 p., 56 notes en bas de page, section de notes retirée |
@@ -133,9 +133,9 @@ Vérifications de référence (23/11/2026) :
   signale les copies **périmées** et les fichiers **orphelins** (jamais supprimés),
   `--verifier` pour ne rien copier. Code 0 = à jour, 1 = écart ou échec, 2 = source absente ;
   un PDF ouvert dans un lecteur est signalé (`winerror 32`).
-- `tests/test_copier_livres.py` : 7 tests sur des dossiers temporaires (copie manquante,
-  périmée détectée puis remplacée, `--verifier` qui ne copie rien, codes 0/1/2, orpheline
-  conservée, cible par défaut). Suite complète : **26 tests OK**.
+- `tests/test_copier_livres.py` : 5 tests sur des dossiers temporaires (copie manquante,
+  périmée détectée par `--verifier` puis remplacée, codes 0/1/2, orpheline conservée).
+  Suite complète : **24 tests OK**.
 
 ---
 
