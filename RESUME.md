@@ -255,6 +255,9 @@ redécouvrir le management* (essai, 56 notes de fin).
   que `static/app.js`, A5 / 17 mm / 11 pt / 1,55) sur venv réinstallé : *Management* 274 p.,
   56 appels, **0 note décalée**, rapport qualité `ok` (1,07 Mo, 26 s) ; *La Ferme* 89 p.,
   aucune note, rapport `ok` (0,51 Mo, 10,5 s). PDF dans `output/_interface/`.
+  **Contrôle visuel** des p. 96/97 et 247/248 du PDF *Management* (rendu pypdfium2 dans
+  `output/_visual/`) : les notes **35** et **49** sont bien en bas de la page de leur appel
+  (p. 96 et p. 247), les pages 97 et 248 n'en portent aucune.
 - **25/11/2026** — WeasyPrint épinglé au commit amont `0dffae4` dans `requirements.txt`
   (commentaire de retour à PyPI pour la 71.0). Venv **reconstruit de zéro**
   (`rm -rf .venv` + `python -m venv` + `pip install -r requirements.txt`) : installation
