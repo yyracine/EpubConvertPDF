@@ -101,7 +101,10 @@ avant `taskkill //PID … //F`.
 - WeasyPrint 70 laisse encore 2 notes sur 56 sur la page suivante. Les rattrapages déjà
   testés (seconde passe, `footnote-policy: block` ciblée, scission de paragraphe, saut de
   page forcé, area resserrée) dégradent tous la page : mesures et verdict dans `RESUME.md`.
-  Ne pas les reprendre sans une version de WeasyPrint qui corrige `footnote-policy: line`.
+  La cause est en amont (arrondi de 1e-13 px dans `_update_footnote_area`, #2995) et **corrigée
+  sur `main` amont @0dffae4** : 274 p. et 0 note décalée. Ce correctif n'est pas encore publié
+  sur PyPI — ne pas retester les variantes ci-dessus, seulement adopter la version qui le
+  contient. Mesure de contrôle : `python output/_mesure.py output/_wpgit` (voir `RESUME.md`).
   Contrôle : comparer, sur le PDF, la page de chaque lien `#reliure-fn-N` à la page de sa
   destination nommée.
 - Un `line-height` ou `font` figé dans l'EPUB fige le réglage : passer par `css_guard`.

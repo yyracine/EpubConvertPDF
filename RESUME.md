@@ -37,6 +37,7 @@ Vérifications de référence (23/11/2026) :
 | `compileall` (converter, tests, app.py) et `node --check static/app.js` | OK |
 | *La Ferme des Animaux* (11 pt / 1,55) | 89 p., aucune note |
 | *Management* (11 pt / 1,55) | 274 p., 56 notes en bas de page, section de notes retirée |
+| *Management* avec WeasyPrint `main` @0dffae4 | 274 p., 56 notes, **0 décalée** (voir point 1) |
 
 ---
 
@@ -128,28 +129,43 @@ Vérifications de référence (23/11/2026) :
 
 ## 3. Ce qui reste à faire
 
-1. **2 notes sur 56 encore rejetées à la page suivante** (fn-35 p. 96→97, fn-49 p. 247→248) :
-   limite de WeasyPrint 70, qui réserve la place puis déplace la note malgré
-   `footnote-policy: line`. **Rendu en deux passes essayé et non retenu** (23/11/2026), car
-   aucune variante ne rattache les notes sans dégrader la page :
+1. **2 notes sur 56 rejetées à la page suivante** (fn-35 p. 96→97, fn-49 p. 247→248) :
+   **corrigé en amont, pas encore publié** (vérifié le 25/11/2026). Rien à faire dans le
+   code : le correctif viendra avec la prochaine version publiée de WeasyPrint.
+   - Cause : test de dépassement de l'area `@footnote` avec un arrondi de 1e-13 px dans
+     `LayoutContext._update_footnote_area()` (`last_child_bottom > footnote_area_bottom`),
+     signalé en amont (#2995) ; des correctifs voisins de notes (#2993, PR #3018
+     « fix-reported-footnotes ») sont arrivés sur `main` les 10–12/11/2026.
+   - Dernière version PyPI : **70.0** (08/09/2026), celle du projet ; pas de 71, pas de
+     préversion.
+   - Mesure sur *Management* (même HTML assemblé, seul le moteur change, `Options()` par
+     défaut) :
 
-   | Seconde passe / réglage | Pages | Notes décalées | Effet visible |
-   |---|---|---|---|
-   | référence (une passe) | 274 | 2 sur 56 | — |
-   | note déplacée avant son paragraphe | 274 | 2 | aucun effet |
-   | note déplacée dans le bloc précédent | 274 | 2 | aucun effet |
-   | `footnote-policy: block` ciblée (`!important`) | 274 | 2 | aucun effet |
-   | `break-inside: avoid` sur le paragraphe | 274 | 2 | aucun effet |
-   | saut de page avant le paragraphe | 275 | 0 | p. 96 et 248 blanches à 60–70 % |
-   | paragraphe scindé juste avant l'appel | 274 | 0 | « pas » seul en fin de p. 96 ;
-     « 49. » isolé en tête de p. 248 |
-   | phrase portant l'appel déplacée | 275 | 1 | p. 35 corrigée, 49 revient décalée |
-   | area resserrée (hors deux passes) | 273 | 4 | pire |
+     | Moteur | Pages | Appels | Notes décalées |
+     |---|---|---|---|
+     | WeasyPrint 70.0 (PyPI, installé) | 274 | 56 | 2 : fn-35 p. 96→97, fn-49 p. 247→248 |
+     | WeasyPrint `main` @0dffae4 (12/11/2026) | 274 | 56 | **0** |
 
-   Verdict : la correction qui marche coûte une page et deux pages à moitié vides ; celle
-   qui garde la pagination laisse un mot et un appel orphelins. Ne pas réessayer sans une
-   version de WeasyPrint qui corrige `footnote-policy: line` ; rouvrir seulement si
-   l'utilisateur préfère explicitement l'appariement à la densité des pages.
+     Texte identique page à page **sauf p. 96/97 et 247/248** (la note remonte en bas de la
+     page de son appel, le paragraphe suivant glisse : total en caractères inchangé).
+     *La Ferme* : 89 p. avec les deux moteurs. **14 tests OK** avec `main`.
+   - Non fait : épingler le commit amont dans `requirements.txt` (dépendance `git+https`,
+     non publiée) ; à décider — soit on attend la 71.0, soit on épingle le commit.
+   - Rendu en deux passes : **non retenu** (23/11/2026, essais conservés pour mémoire).
+     Aucune variante ne rattachait les notes sans dégrader la page :
+
+     | Seconde passe / réglage | Pages | Notes décalées | Effet visible |
+     |---|---|---|---|
+     | référence (une passe) | 274 | 2 sur 56 | — |
+     | note déplacée avant son paragraphe | 274 | 2 | aucun effet |
+     | note déplacée dans le bloc précédent | 274 | 2 | aucun effet |
+     | `footnote-policy: block` ciblée (`!important`) | 274 | 2 | aucun effet |
+     | `break-inside: avoid` sur le paragraphe | 274 | 2 | aucun effet |
+     | saut de page avant le paragraphe | 275 | 0 | p. 96 et 248 blanches à 60–70 % |
+     | paragraphe scindé juste avant l'appel | 274 | 0 | « pas » seul en fin de p. 96 ;
+       « 49. » isolé en tête de p. 248 |
+     | phrase portant l'appel déplacée | 275 | 1 | p. 35 corrigée, 49 revient décalée |
+     | area resserrée (hors deux passes) | 273 | 4 | pire |
 2. **Raccourci `font` à taille relative** (`font: 0.9em/1.2 …`) : laissé intact, donc son
    interligne figé subsiste. Hors périmètre de la demande précédente, à normaliser si besoin.
 3. **Interface web non revérifiée visuellement** depuis les changements (aucun parcours dans
@@ -232,6 +248,12 @@ redécouvrir le management* (essai, 56 notes de fin).
   14 tests OK, serveur relancé, 2 notes encore décalées sur 56.
 - **23/11/2026** — création d'`AGENTS.md` : protocole de session (lire ce fichier d'abord,
   le mettre à jour à la fin), commandes, environnement, conventions et pièges connus.
+- **25/11/2026** — mise à jour documentaire poussée (`bbeb768`). WeasyPrint : 70.0 reste la
+  dernière version publiée, mais `main` amont (@0dffae4, 12/11/2026) corrige le rejet des
+  notes — mesuré sur *Management* : 274 p. et **0 note décalée** (contre 2), texte inchangé
+  hors p. 96/97 et 247/248, *La Ferme* 89 p., 14 tests OK. Moteur amont installé à part dans
+  `output/_wpgit` (non épinglé dans `requirements.txt`), PDF de comparaison dans
+  `output/_mesure/`.
 - **23/11/2026** — fin de session : serveur arrêté, `AGENTS.md` et `RESUME.md` modifiés mais
   **non commités**. À reprendre : décider si l'on pousse ces deux fichiers et si l'on ouvre
   l'option « saut de page » (0 note décalée, 275 p.) ; sinon attendre une version de
