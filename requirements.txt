@@ -1,6 +1,12 @@
 Flask>=3.0,<4
 EbookLib>=0.18,<0.22
-WeasyPrint>=62,<71
+# WeasyPrint 70.0 (dernière version PyPI, 08/09/2026) rejette encore 2 notes sur 56 :
+# la note glisse à la page suivante malgré `footnote-policy: line` (voir RESUME.md, point 1).
+# Le correctif est sur `main` amont mais pas encore publié, d'où l'épinglage du commit
+# 0dffae4 (12/11/2026) : 274 pages et 0 note décalée sur Management.
+# Dès la sortie de la 71.0, revenir à PyPI : remplacer ces trois lignes par
+#     WeasyPrint>=71,<72
+WeasyPrint @ git+https://github.com/Kozea/WeasyPrint@0dffae41ffd1ceb78f4c45f5894ceece0b1dcb9d
 lxml>=5
 pypdf>=4
 Pillow>=10

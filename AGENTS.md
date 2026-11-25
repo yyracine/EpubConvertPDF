@@ -44,7 +44,14 @@ avant `taskkill //PID … //F`.
 ## Environnement
 
 - Python ≥ 3.10 (`.venv` du projet en 3.15) ; dépendances `requirements.txt` :
-  Flask 3, EbookLib, WeasyPrint 62–70, lxml, pypdf, Pillow.
+  Flask 3, EbookLib, WeasyPrint **épinglé au commit amont `0dffae4`** (voir plus bas),
+  lxml, pypdf, Pillow.
+- L'épinglage `WeasyPrint @ git+https://github.com/Kozea/WeasyPrint@0dffae4…` exige **git et
+  un accès réseau** à l'installation (`run.bat` compris). `pip freeze` affiche l'URL git,
+  mais `weasyprint.__version__` reste `70.0` (l'amont ne change pas son numéro de version
+  entre deux publications). Dès la sortie de la **71.0**, remplacer les trois lignes
+  commentées de `requirements.txt` par `WeasyPrint>=71,<72`, reconstruire le venv et
+  revérifier 0 note décalée sur *Management*.
 - Pango requis par WeasyPrint : MSYS2 UCRT64 (`winget install MSYS2.MSYS2` puis
   `pacman -S mingw-w64-ucrt-x86_64-pango`). `C:\msys64\ucrt64\bin` est détecté
   automatiquement, sinon `WEASYPRINT_DLL_DIRECTORIES`.
@@ -102,9 +109,9 @@ avant `taskkill //PID … //F`.
   testés (seconde passe, `footnote-policy: block` ciblée, scission de paragraphe, saut de
   page forcé, area resserrée) dégradent tous la page : mesures et verdict dans `RESUME.md`.
   La cause est en amont (arrondi de 1e-13 px dans `_update_footnote_area`, #2995) et **corrigée
-  sur `main` amont @0dffae4** : 274 p. et 0 note décalée. Ce correctif n'est pas encore publié
-  sur PyPI — ne pas retester les variantes ci-dessus, seulement adopter la version qui le
-  contient. Mesure de contrôle : `python output/_mesure.py output/_wpgit` (voir `RESUME.md`).
+  sur `main` amont @0dffae4**, commit épinglé dans `requirements.txt` depuis le 25/11/2026 :
+  274 p. et 0 note décalée. Ne pas retester les variantes ci-dessus. Mesure de contrôle :
+  `python output/_mesure.py installed` (voir `RESUME.md`).
   Contrôle : comparer, sur le PDF, la page de chaque lien `#reliure-fn-N` à la page de sa
   destination nommée.
 - Un `line-height` ou `font` figé dans l'EPUB fige le réglage : passer par `css_guard`.

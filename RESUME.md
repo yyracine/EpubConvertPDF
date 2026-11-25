@@ -2,10 +2,10 @@
 
 > **À lire au début de chaque session, à mettre à jour à la fin.**
 > Les instructions de travail (commandes, conventions, pièges) sont dans `AGENTS.md`.
-> Dernière mise à jour : 23 novembre 2026.
+> Dernière mise à jour : 25 novembre 2026.
 
-Convertisseur local EPUB → PDF « de qualité livre » (Flask + WeasyPrint 70, Python 3.15,
-interface française). Aucun fichier ne quitte l'ordinateur.
+Convertisseur local EPUB → PDF « de qualité livre » (Flask + WeasyPrint 70.0 épinglé au commit
+amont `0dffae4`, Python 3.15, interface française). Aucun fichier ne quitte l'ordinateur.
 Dossier : `D:\Documents\Dev\Freebuff\ConvertisseurEpubPdf` — ce n'est **pas** le workspace
 connecté (`D:\Documents\Dev\Test`) : utiliser des chemins absolus pour lire/écrire, et
 travailler en terminal depuis `/d/Documents/Dev/Freebuff/ConvertisseurEpubPdf`.
@@ -37,7 +37,7 @@ Vérifications de référence (23/11/2026) :
 | `compileall` (converter, tests, app.py) et `node --check static/app.js` | OK |
 | *La Ferme des Animaux* (11 pt / 1,55) | 89 p., aucune note |
 | *Management* (11 pt / 1,55) | 274 p., 56 notes en bas de page, section de notes retirée |
-| *Management* avec WeasyPrint `main` @0dffae4 | 274 p., 56 notes, **0 décalée** (voir point 1) |
+| *Management* avec WeasyPrint épinglé @0dffae4 | 274 p., 56 notes, **0 décalée** (voir point 1) |
 
 ---
 
@@ -149,8 +149,11 @@ Vérifications de référence (23/11/2026) :
      Texte identique page à page **sauf p. 96/97 et 247/248** (la note remonte en bas de la
      page de son appel, le paragraphe suivant glisse : total en caractères inchangé).
      *La Ferme* : 89 p. avec les deux moteurs. **14 tests OK** avec `main`.
-   - Non fait : épingler le commit amont dans `requirements.txt` (dépendance `git+https`,
-     non publiée) ; à décider — soit on attend la 71.0, soit on épingle le commit.
+   - **Épinglé depuis le 25/11/2026** : `requirements.txt` contient
+     `WeasyPrint @ git+https://github.com/Kozea/WeasyPrint@0dffae4…` avec le mode d'emploi
+     pour revenir à PyPI (`WeasyPrint>=71,<72`) dès la publication de la 71.0. Conséquence :
+     l'installation exige git et un accès réseau, et `weasyprint.__version__` affiche
+     toujours `70.0`.
    - Rendu en deux passes : **non retenu** (23/11/2026, essais conservés pour mémoire).
      Aucune variante ne rattachait les notes sans dégrader la page :
 
@@ -248,6 +251,11 @@ redécouvrir le management* (essai, 56 notes de fin).
   14 tests OK, serveur relancé, 2 notes encore décalées sur 56.
 - **23/11/2026** — création d'`AGENTS.md` : protocole de session (lire ce fichier d'abord,
   le mettre à jour à la fin), commandes, environnement, conventions et pièges connus.
+- **25/11/2026** — WeasyPrint épinglé au commit amont `0dffae4` dans `requirements.txt`
+  (commentaire de retour à PyPI pour la 71.0). Venv **reconstruit de zéro**
+  (`rm -rf .venv` + `python -m venv` + `pip install -r requirements.txt`) : installation
+  depuis git OK, 14 tests OK, *Management* 274 p. et **0 note décalée**, `/api/health` →
+  `ready: true`, serveur arrêté ensuite. `output/_wpgit` supprimé (devenu inutile).
 - **25/11/2026** — mise à jour documentaire poussée (`bbeb768`). WeasyPrint : 70.0 reste la
   dernière version publiée, mais `main` amont (@0dffae4, 12/11/2026) corrige le rejet des
   notes — mesuré sur *Management* : 274 p. et **0 note décalée** (contre 2), texte inchangé
