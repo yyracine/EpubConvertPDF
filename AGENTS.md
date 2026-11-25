@@ -82,7 +82,8 @@ avant `taskkill //PID … //F`.
 - `converter/print.css` — mise en page d'impression (page, en-têtes, folios, notes).
 - `converter/renderer.py`, `converter/quality.py`, `converter/jobs.py`, `converter/errors.py`.
 - `app.py`, `templates/index.html`, `static/` — serveur et interface.
-- `tests/` — `test_layout_and_structure.py`, `test_footnotes.py`, `test_quality_report.py`.
+- `tests/` — `test_layout_and_structure.py`, `test_footnotes.py`, `test_quality_report.py`,
+  `test_copier_livres.py` (dossier temporaire, aucun fichier de livraison réel touché).
 - `tools/copier_livres.py` — copie des PDF de `output/livres` vers le dossier de livraison
   `D:\Documents\DEV\Test\livres-pdf`, avec empreinte MD5 (code 0 = à jour, 1 = écart ou
   échec, 2 = source absente) ; les copies orphelines sont signalées, jamais supprimées.
