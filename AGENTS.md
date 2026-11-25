@@ -33,6 +33,10 @@ curl -s http://127.0.0.1:8765/api/health         # ready: true + version WeasyPr
 .venv/Scripts/python.exe -m unittest discover -s tests -v
 .venv/Scripts/python.exe -m compileall -q converter tests app.py
 node --check static/app.js
+
+# livraison : copie output/livres → D:\Documents\DEV\Test\livres-pdf avec contrôle MD5
+.venv/Scripts/python.exe tools/copier_livres.py            # copie ce qui manque ou a changé
+.venv/Scripts/python.exe tools/copier_livres.py --verifier # ne copie rien, signale les écarts
 ```
 
 `print.css` et les constantes sont lus à l'import : **redémarrer le serveur** après une
@@ -79,6 +83,9 @@ avant `taskkill //PID … //F`.
 - `converter/renderer.py`, `converter/quality.py`, `converter/jobs.py`, `converter/errors.py`.
 - `app.py`, `templates/index.html`, `static/` — serveur et interface.
 - `tests/` — `test_layout_and_structure.py`, `test_footnotes.py`, `test_quality_report.py`.
+- `tools/copier_livres.py` — copie des PDF de `output/livres` vers le dossier de livraison
+  `D:\Documents\DEV\Test\livres-pdf`, avec empreinte MD5 (code 0 = à jour, 1 = écart ou
+  échec, 2 = source absente) ; les copies orphelines sont signalées, jamais supprimées.
 
 ## Conventions à respecter
 

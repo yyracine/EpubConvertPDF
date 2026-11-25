@@ -125,6 +125,15 @@ Vérifications de référence (23/11/2026) :
   `footnote-policy: line` + pseudo-appel invisible (mesuré en comparant, sur le PDF, la page
   de chaque appel à la page de sa destination nommée).
 
+### Session G — livraison des PDF et script de copie
+- Les quatre PDF de référence (barbecue, Jimi Hendrix, sept habitudes, management) sont
+  livrés dans `D:\Documents\DEV\Test\livres-pdf` (hors dépôt, ignoré par Git), MD5
+  identiques à `output/livres`.
+- Nouveau `tools/copier_livres.py` : copie `output/livres` → `livres-pdf` avec contrôle MD5,
+  signale les copies **périmées** et les fichiers **orphelins** (jamais supprimés),
+  `--verifier` pour ne rien copier. Code 0 = à jour, 1 = écart ou échec, 2 = source absente ;
+  un PDF ouvert dans un lecteur est signalé (`winerror 32`).
+
 ---
 
 ## 3. Ce qui reste à faire
@@ -210,6 +219,10 @@ curl -s http://127.0.0.1:8765/api/health
 .venv/Scripts/python.exe -m unittest discover -s tests -v
 .venv/Scripts/python.exe -m compileall -q converter tests app.py
 node --check static/app.js
+
+# livraison des PDF (output/livres → D:\Documents\DEV\Test\livres-pdf, contrôle MD5)
+.venv/Scripts/python.exe tools/copier_livres.py
+.venv/Scripts/python.exe tools/copier_livres.py --verifier
 ```
 
 Retrouver/arrêter le serveur : `netstat -ano | grep -E "127.0.0.1:8765\s.*LISTENING"`, puis
