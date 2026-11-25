@@ -96,6 +96,15 @@ avant `taskkill //PID … //F`.
 - Notes de bas de page : `<a class="fn-call">` suivi d'un `<span class="footnote reliure-note">`
   **dans le paragraphe**, avant le texte qui suit l'appel ; numéro attribué par Reliure ;
   identifiant d'origine de l'appel conservé ; contenu ramené en ligne ; blancs compactés.
+- **Signet de secours** : si le sommaire de l'EPUB vise un fichier ou une ancre inexistante et
+  qu'un chapitre n'a aucun titre `h1`–`h6`, `assembler.py` pose
+  `<div class="reliure-bookmark" data-label="Titre détecté">` en tête de section. `print.css`
+  lui donne `bookmark-level: 1`, `bookmark-label: attr(data-label)`, `height: 0`,
+  `margin`/`padding` à zéro et `font-size: 0`. **Ne pas supprimer ce bloc ni sa règle** (le PDF
+  sortirait sans aucun signet) et **ne pas y mettre de texte** : `content(text)` ne produit pas
+  de signet sur un bloc vide, et un libellé écrit dans le bloc serait extrait du PDF et compté
+  dans les mots. Vérifié par `BrokenTocBookmarkTest` dans
+  `tests/test_layout_and_structure.py`.
 - **Ne pas supprimer le pseudo-appel `::footnote-call`** (il est réduit à rien) : sa
   présence rattache les notes à leur page ; ne pas déplacer les notes en fin ou en tête de
   paragraphe (mesuré : plus de notes décalées).
