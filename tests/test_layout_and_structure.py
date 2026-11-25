@@ -277,5 +277,50 @@ class DocumentLevelTypeTest(unittest.TestCase):
         self.assertEqual(kinds, ["body", "toc"])
 
 
+class BrokenTocBookmarkTest(unittest.TestCase):
+    """Sommaire de l'EPUB cassé : les signets viennent des titres de chapitre détectés."""
+
+    def _render(self, chapters: dict[str, str], toc: list) -> tuple[str, PdfReader]:
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            document, media = _document(directory, chapters)
+            document.toc = toc
+            source = build_document(document, media, Options(include_toc=False))
+            pdf = render_pdf(source, base_url=media)
+        return source, PdfReader(io.BytesIO(pdf))
+
+    def test_bookmarks_generated_from_detected_titles(self):
+        source, reader = self._render(
+            {"chap1.xhtml": f"<p>{_PARAGRAPH}</p>", "chap2.xhtml": f"<p>{_PARAGRAPH}</p>"},
+            [
+                epub_reader.TocLink("Première partie", "chap1.xhtml", "ancre-absente"),
+                epub_reader.TocLink("Seconde partie", "chap2.xhtml", "ancre-absente"),
+            ],
+        )
+
+        titles = [item.title for item in reader.outline if not isinstance(item, list)]
+        self.assertIn('class="reliure-bookmark"', source)
+        self.assertEqual(len(titles), 2)
+        self.assertTrue(all(title.strip() for title in titles))
+
+    def test_no_generated_bookmark_when_chapter_has_a_heading(self):
+        source, reader = self._render(
+            {"chap1.xhtml": f"<h1>Un vrai titre</h1><p>{_PARAGRAPH}</p>"},
+            [epub_reader.TocLink("Première partie", "chap1.xhtml", "ancre-absente")],
+        )
+
+        titles = [item.title for item in reader.outline if not isinstance(item, list)]
+        self.assertNotIn('class="reliure-bookmark"', source)
+        self.assertEqual(titles, ["Un vrai titre"])
+
+    def test_no_generated_bookmark_when_toc_targets_are_sound(self):
+        source, _reader = self._render(
+            {"chap1.xhtml": f"<p>{_PARAGRAPH}</p>"},
+            [epub_reader.TocLink("Première partie", "chap1.xhtml", "")],
+        )
+
+        self.assertNotIn('class="reliure-bookmark"', source)
+
+
 if __name__ == "__main__":
     unittest.main()

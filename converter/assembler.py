@@ -128,6 +128,8 @@ def build_document(document: EpubDocument, media_root: Path, options: Options) -
     """Assemble les chapitres, le sommaire et les pages liminaires en un seul HTML."""
     dropped = _dropped_chapters(document, options)
     prepared, css_blocks = _prepare_chapters(document, media_root, dropped)
+    # Sommaire de l'EPUB inutilisable : des signets sont générés depuis les titres détectés.
+    toc_broken = _toc_targets_broken(document, prepared)
 
     parts: list[str] = []
     if options.include_cover_page and document.cover_bytes:
@@ -143,9 +145,14 @@ def build_document(document: EpubDocument, media_root: Path, options: Options) -
     for chapter, body, _ids in prepared:
         title = html.escape(chapter.title or f"Chapitre {chapter.index + 1}")
         running = "" if chapter.kind in _FRONT_MATTER else html.escape(_running_title(chapter.title))
+        bookmark = ""
+        if toc_broken and chapter.kind not in _FRONT_MATTER and not _has_heading(body):
+            # Aucun titre HTML ne produira de signet : on en pose un sur le titre détecté.
+            bookmark = f'<div class="reliure-bookmark" data-label="{title}"></div>'
         parts.append(
             f'<section class="chapter" id="{chapter.anchor}" data-title="{title}" data-kind="{chapter.kind}">'
             f'<span class="running-head">{running}</span>'
+            f"{bookmark}"
             f"{_inner_html(body)}"
             "</section>"
         )
@@ -741,6 +748,29 @@ def _french_date(value: str) -> str:
         except ValueError:
             return raw
     return f"{moment.day} {_MONTHS[moment.month - 1]} {moment.year}"
+
+
+def _has_heading(body) -> bool:
+    """Vrai si un titre HTML du chapitre produira déjà un signet (`bookmark-level`)."""
+    return any(body.xpath(f".//{tag}") for tag in ("h1", "h2", "h3", "h4", "h5", "h6"))
+
+
+def _toc_targets_broken(document: EpubDocument, prepared) -> bool:
+    """Vrai si au moins une entrée du sommaire de l'EPUB vise une cible inexistante."""
+    id_sets = {chapter.index: set(ids) for chapter, _body, ids in prepared}
+    lookup = _chapter_lookup(document)
+    stack = list(document.toc)
+    while stack:
+        link = stack.pop()
+        stack.extend(link.children)
+        if not link.target:
+            continue
+        chapter = lookup(link.target)
+        if chapter is None or chapter.index not in id_sets:
+            return True
+        if link.fragment and link.fragment not in id_sets[chapter.index]:
+            return True
+    return False
 
 
 def _toc_page(document: EpubDocument, prepared) -> str:

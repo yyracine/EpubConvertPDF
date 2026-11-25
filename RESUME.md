@@ -33,7 +33,7 @@ Vérifications de référence (23/11/2026) :
 
 | Contrôle | Résultat |
 |---|---|
-| `.venv/Scripts/python.exe -m unittest discover -s tests -v` | **16 tests OK** |
+| `.venv/Scripts/python.exe -m unittest discover -s tests -v` | **19 tests OK** |
 | `compileall` (converter, tests, app.py) et `node --check static/app.js` | OK |
 | *La Ferme des Animaux* (11 pt / 1,55) | 89 p., aucune note |
 | *Management* (11 pt / 1,55) | 274 p., 56 notes en bas de page, section de notes retirée |
@@ -251,6 +251,13 @@ redécouvrir le management* (essai, 56 notes de fin).
   14 tests OK, serveur relancé, 2 notes encore décalées sur 56.
 - **23/11/2026** — création d'`AGENTS.md` : protocole de session (lire ce fichier d'abord,
   le mettre à jour à la fin), commandes, environnement, conventions et pièges connus.
+- **25/11/2026** — signets générés quand le sommaire de l'EPUB est cassé : si une entrée du
+  sommaire vise un fichier ou une ancre inexistante et qu'un chapitre n'a aucun titre HTML
+  (`h1`–`h6`), `assembler.py` pose un `.reliure-bookmark` (`bookmark-level: 1`,
+  `bookmark-label: attr(data-label)`, hauteur nulle) en tête du chapitre avec le titre
+  détecté (rien si un titre HTML produira déjà le signet). Trois tests ajoutés.
+  *Les sept habitudes des cerveaux* : 112 p. et 15 432 mots inchangés, **0 → 14 signets**,
+  rapport `warn` → **`ok`** ; *Management* inchangé (274 p., 233 signets). **19 tests OK**.
 - **25/11/2026** — faux positif « fragments de texte hors page » corrigé dans
   `converter/quality.py` : un run composé uniquement d'espaces, posé très loin de la page par
   une ancre ou un blanc du CSS de l'EPUB, n'est plus compté (texte et nombre de mots
