@@ -153,6 +153,11 @@ def _scan_page(page) -> tuple[str, int]:
         if not text:
             return
         parts.append(text)
+        # Un run d'espaces (ancre ou blanc de mise en page venu du CSS de l'EPUB) peut être
+        # positionné très loin de la page sans qu'aucun caractère ne soit visible : il ne
+        # s'agit pas de texte hors page. Les espaces ne comptent pas non plus dans les mots.
+        if not text.strip():
+            return
         x = tm[4] * cm[0] + tm[5] * cm[2] + cm[4]
         y = tm[4] * cm[1] + tm[5] * cm[3] + cm[5]
         if x < -1 or x > width + 1 or y < -1 or y > height + 1:

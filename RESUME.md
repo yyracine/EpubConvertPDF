@@ -33,7 +33,7 @@ Vérifications de référence (23/11/2026) :
 
 | Contrôle | Résultat |
 |---|---|
-| `.venv/Scripts/python.exe -m unittest discover -s tests -v` | **14 tests OK** |
+| `.venv/Scripts/python.exe -m unittest discover -s tests -v` | **16 tests OK** |
 | `compileall` (converter, tests, app.py) et `node --check static/app.js` | OK |
 | *La Ferme des Animaux* (11 pt / 1,55) | 89 p., aucune note |
 | *Management* (11 pt / 1,55) | 274 p., 56 notes en bas de page, section de notes retirée |
@@ -251,6 +251,13 @@ redécouvrir le management* (essai, 56 notes de fin).
   14 tests OK, serveur relancé, 2 notes encore décalées sur 56.
 - **23/11/2026** — création d'`AGENTS.md` : protocole de session (lire ce fichier d'abord,
   le mettre à jour à la fin), commandes, environnement, conventions et pièges connus.
+- **25/11/2026** — faux positif « fragments de texte hors page » corrigé dans
+  `converter/quality.py` : un run composé uniquement d'espaces, posé très loin de la page par
+  une ancre ou un blanc du CSS de l'EPUB, n'est plus compté (texte et nombre de mots
+  inchangés). Deux tests ajoutés à `test_quality_report.py` : espaces ignorés, vrai texte
+  hors page toujours signalé. **16 tests OK**. Reconversion par l'interface : *Le barbecue
+  facile* 173 p. et *Jimi Hendrix* 94 p. passent à `ok` ; *Les sept habitudes* 112 p. ne
+  garde que l'avertissement de sommaire cassé de l'EPUB source.
 - **25/11/2026** — conversions de bout en bout par les routes de l'interface (mêmes champs
   que `static/app.js`, A5 / 17 mm / 11 pt / 1,55) sur venv réinstallé : *Management* 274 p.,
   56 appels, **0 note décalée**, rapport qualité `ok` (1,07 Mo, 26 s) ; *La Ferme* 89 p.,

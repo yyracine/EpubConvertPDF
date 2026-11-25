@@ -15,8 +15,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from converter import quality
 
 
-def _build_pdf(*, blank_page: bool, embedded_font: bool) -> bytes:
-    """PDF d'une page de texte, avec page blanche et police incorporée optionnelles."""
+def _build_pdf(*, blank_page: bool, embedded_font: bool, stray: str = "") -> bytes:
+    """PDF d'une page de texte, avec page blanche et police incorporée optionnelles.
+
+    `stray` ajoute un second run de texte à des coordonnées très au-delà de la page,
+    pour reproduire les blancs positionnés hors page de certains EPUB.
+    """
     writer = PdfWriter()
     writer.add_metadata({"/Title": "Test qualité", "/Author": "Reliure"})
 
@@ -41,7 +45,10 @@ def _build_pdf(*, blank_page: bool, embedded_font: bool) -> bytes:
         {NameObject("/Font"): DictionaryObject({NameObject("/F1"): font_ref})}
     )
     stream = DecodedStreamObject()
-    stream.set_data(b"BT /F1 24 Tf 72 720 Td (Controle qualite) Tj ET")
+    content = b"BT /F1 24 Tf 72 720 Td (Controle qualite) Tj ET"
+    if stray:
+        content += b"\nBT /F1 24 Tf 20000 20000 Td (" + stray.encode("latin-1") + b") Tj ET"
+    stream.set_data(content)
     page[NameObject("/Contents")] = writer._add_object(stream)
 
     if blank_page:
@@ -68,6 +75,24 @@ class QualityReportTest(unittest.TestCase):
             _warnings(report),
             ["1 page vide : p. 2", "1 police non incorporée : TestFont"],
         )
+
+    def test_whitespace_run_outside_page_is_ignored(self):
+        report = quality.inspect(
+            _build_pdf(blank_page=False, embedded_font=True, stray="   "),
+            expect_bookmarks=False,
+        )
+
+        self.assertEqual(report["state"], "ok")
+        self.assertEqual(_warnings(report), [])
+
+    def test_real_text_outside_page_is_still_reported(self):
+        report = quality.inspect(
+            _build_pdf(blank_page=False, embedded_font=True, stray="Perdu"),
+            expect_bookmarks=False,
+        )
+
+        self.assertEqual(report["state"], "warn")
+        self.assertEqual(_warnings(report), ["1 fragment de texte hors page"])
 
     def test_clean_pdf_stays_ok(self):
         report = quality.inspect(
