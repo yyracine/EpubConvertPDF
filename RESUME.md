@@ -260,9 +260,11 @@ redécouvrir le management* (essai, 56 notes de fin).
   (p. 96 et p. 247), les pages 97 et 248 n'en portent aucune.
 - **25/11/2026** — variantes de réglages sur *Management* via les routes de l'interface, sur
   venv réinstallé : **preset essai** (marges larges, interligne 1,70, 11 pt) → **306 p.** ;
-  **12 pt** (marges normales, 1,55) → **311 p.** Dans les deux cas 56 appels de note,
-  **0 note décalée** et rapport qualité `ok` (1,10 Mo / 27 s et 1,03 Mo / 26,7 s). PDF dans
-  `output/_variantes/`. Les 0 note décalée ne dépendent donc pas du réglage de mise en page.
+  **12 pt** (marges normales, 1,55) → **311 p.** ; **A4 / marges étroites / interligne 1,40**
+  → **164 p.** Partout 56 appels de note, **0 note décalée** et rapport qualité `ok`
+  (1,10 Mo / 27 s ; 1,03 Mo / 26,7 s ; 0,94 Mo / 18,9 s). PDF dans `output/_variantes/`.
+  Les 0 note décalée ne dépendent donc pas du réglage de mise en page, y compris sur les
+  réglages extrêmes (A4, marges 13 mm, interligne serré).
 - **25/11/2026** — WeasyPrint épinglé au commit amont `0dffae4` dans `requirements.txt`
   (commentaire de retour à PyPI pour la 71.0). Venv **reconstruit de zéro**
   (`rm -rf .venv` + `python -m venv` + `pip install -r requirements.txt`) : installation
